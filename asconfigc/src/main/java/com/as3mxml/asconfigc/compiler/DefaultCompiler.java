@@ -33,21 +33,28 @@ import com.as3mxml.asconfigc.utils.ProjectUtils;
 
 public class DefaultCompiler implements IASConfigCCompiler {
 	public DefaultCompiler() {
-		this(false, null);
+		this(false, null, null);
 	}
 
-	public DefaultCompiler(boolean verbose, List<String> jvmargs) {
+	public DefaultCompiler(boolean verbose, List<String> jvmargs, List<String> tokens) {
 		this.verbose = verbose;
 		this.jvmargs = jvmargs;
+		this.tokens = tokens;
 	}
 
 	private boolean verbose = false;
 	private List<String> jvmargs = null;
+	private List<String> tokens = null;
 
 	private void fixOptions(List<String> options, String projectType, boolean isASDoc, Path workspaceRoot,
 			Path sdkPath) throws ASConfigCException {
 		boolean sdkIsRoyale = ApacheRoyaleUtils.isValidSDK(sdkPath) != null;
 		Path jarPath = null;
+
+		if (tokens != null) {
+			options.addAll(0, tokens);
+		}
+
 		if (!isASDoc) {
 			jarPath = ProjectUtils.findCompilerJarPath(projectType, sdkPath.toString(), !sdkIsRoyale);
 		} else {
